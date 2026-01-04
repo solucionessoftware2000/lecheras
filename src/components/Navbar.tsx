@@ -10,7 +10,7 @@ export function Navbar() {
             <Milk className="w-5 h-5" />
           </div>
           <span className="text-lg font-bold tracking-tight text-white">
-            Lecheras<span className="text-red-500"> ...</span>
+            Lecheras<span className="text-red-500"> Lima</span>
           </span>
         </Link>
 
