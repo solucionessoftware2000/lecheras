@@ -14,6 +14,18 @@ import { useListings } from "../hooks/useListings";
 import { ImageGallery } from "../components/ImageGallery";
 import { Listing } from "../types";
 
+const WHATSAPP_PHONE = "51936615158";
+
+function buildWhatsAppLink(params: { phone: string; text: string }) {
+  const base = "https://api.whatsapp.com/send/";
+  const url = new URL(base);
+  url.searchParams.set("phone", params.phone);
+  url.searchParams.set("text", params.text);
+  url.searchParams.set("type", "phone_number");
+  url.searchParams.set("app_absent", "0");
+  return url.toString();
+}
+
 export function ListingDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { getListing, toggleLike } = useListings();
@@ -26,7 +38,65 @@ export function ListingDetailPage() {
     }
   }, [id, getListing]);
 
-  const primaryLocation = useMemo(() => listing?.locations?.[0] ?? "—", [listing]);
+  const primaryLocation = useMemo(
+    () => listing?.locations?.[0] ?? "—",
+    [listing]
+  );
+
+  // URL actual para compartir (funciona en prod). En local también.
+  const currentUrl = useMemo(() => {
+    if (typeof window === "undefined") return "";
+    return window.location.href;
+  }, []);
+
+  const handleContact = () => {
+    if (!listing) return;
+
+    const locs =
+      listing.locations?.length ? listing.locations.join(", ") : "No especificado";
+
+    const text = [
+      `Hola, quiero información sobre:`,
+      `• Nombre: ${listing.name}`,
+      `• Edad: ${listing.age} años`,
+      `• Medidas: Cintura ${listing.measurements.waist}cm, Estatura ${listing.measurements.height}cm, Caderas ${listing.measurements.hips}cm, Busto ${listing.measurements.bust}cm`,
+      `• Lugares: ${locs}`,
+      ``,
+      `Link: ${window.location.href}`,
+    ].join("\n");
+
+    const wa = buildWhatsAppLink({ phone: WHATSAPP_PHONE, text });
+    window.open(wa, "_blank", "noopener,noreferrer");
+  };
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    const title = listing ? `${listing.name} - Perfil` : "Perfil";
+    const text = listing
+      ? `Mira este perfil: ${listing.name} (${listing.age} años)`
+      : "Mira este perfil";
+
+    try {
+      // Web Share API (móvil / algunos navegadores)
+      if (navigator.share) {
+        await navigator.share({ title, text, url });
+        return;
+      }
+
+      // Fallback: copiar al portapapeles
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+        alert("Enlace copiado ✅");
+        return;
+      }
+
+      // Último fallback
+      window.prompt("Copia este enlace:", url);
+    } catch {
+      // Si el usuario cancela share o falla
+      // no hacemos nada o mostramos mensaje suave
+    }
+  };
 
   if (!listing) {
     return (
@@ -54,7 +124,11 @@ export function ListingDetailPage() {
         <div className="grid gap-12 lg:grid-cols-2">
           {/* Left Column: Gallery */}
           <div>
-            <ImageGallery images={listing.images} videos={listing.videos} name={listing.name} />
+            <ImageGallery
+              images={listing.images}
+              videos={listing.videos}
+              name={listing.name}
+            />
           </div>
 
           {/* Right Column: Details */}
@@ -76,7 +150,7 @@ export function ListingDetailPage() {
                 </div>
               </div>
 
-              {/* Stats (reemplaza el bloque de price del diseño original, sin romper la estética) */}
+              {/* Stats */}
               <div className="rounded-xl bg-[#1F1F1F] border border-white/5 p-4 sm:min-w-[220px]">
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 border rounded-lg bg-black/30 border-white/10">
@@ -102,11 +176,9 @@ export function ListingDetailPage() {
               </div>
             </div>
 
-            {/* About (Nombre / Edad / Descripción ya están, aquí queda la descripción) */}
+            {/* Descripción */}
             <div className="mb-6 rounded-xl bg-[#1F1F1F] p-6 border border-white/5">
-              <h2 className="mb-4 text-lg font-semibold text-white">
-                Descripción
-              </h2>
+              <h2 className="mb-4 text-lg font-semibold text-white">Descripción</h2>
               <p className="leading-relaxed text-neutral-400">{listing.description}</p>
             </div>
 
@@ -120,22 +192,30 @@ export function ListingDetailPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-4 border rounded-lg border-white/10 bg-black/20">
                   <div className="text-sm text-neutral-500">Cintura</div>
-                  <div className="font-medium text-white">{listing.measurements.waist} cm</div>
+                  <div className="font-medium text-white">
+                    {listing.measurements.waist} cm
+                  </div>
                 </div>
 
                 <div className="p-4 border rounded-lg border-white/10 bg-black/20">
                   <div className="text-sm text-neutral-500">Estatura</div>
-                  <div className="font-medium text-white">{listing.measurements.height} cm</div>
+                  <div className="font-medium text-white">
+                    {listing.measurements.height} cm
+                  </div>
                 </div>
 
                 <div className="p-4 border rounded-lg border-white/10 bg-black/20">
                   <div className="text-sm text-neutral-500">Caderas</div>
-                  <div className="font-medium text-white">{listing.measurements.hips} cm</div>
+                  <div className="font-medium text-white">
+                    {listing.measurements.hips} cm
+                  </div>
                 </div>
 
                 <div className="p-4 border rounded-lg border-white/10 bg-black/20">
                   <div className="text-sm text-neutral-500">Busto</div>
-                  <div className="font-medium text-white">{listing.measurements.bust} cm</div>
+                  <div className="font-medium text-white">
+                    {listing.measurements.bust} cm
+                  </div>
                 </div>
               </div>
             </div>
@@ -165,6 +245,7 @@ export function ListingDetailPage() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
+                onClick={handleContact}
                 className="flex-1 py-4 font-bold text-center text-white transition-colors bg-red-600 shadow-lg rounded-xl shadow-red-500/20 hover:bg-red-500"
               >
                 Contactar
@@ -186,6 +267,7 @@ export function ListingDetailPage() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
+                onClick={handleShare}
                 className="flex items-center justify-center rounded-xl border border-white/10 bg-[#1F1F1F] px-6 text-white hover:bg-white/5"
               >
                 <Share2 className="w-6 h-6" />
