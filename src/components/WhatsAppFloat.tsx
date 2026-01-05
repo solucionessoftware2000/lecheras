@@ -23,10 +23,11 @@ export function WhatsAppFloat() {
       rel="noopener noreferrer"
       aria-label="Abrir WhatsApp"
       className="
-        fixed bottom-5 right-5 z-50
-        group
+        fixed z-50
+        right-3 sm:right-5
+        bottom-[calc(env(safe-area-inset-bottom,0px)+12px)] sm:bottom-5
+        group select-none
         flex items-center
-        select-none
         rounded-2xl
         bg-[#1F1F1F]
         border border-white/10
@@ -37,61 +38,59 @@ export function WhatsAppFloat() {
         active:translate-y-0
       "
     >
-      {/* Wrapper para centrar y dar buen padding */}
-      <div className="flex items-center gap-4 px-4 py-3">
+      <div className="flex items-center gap-2 sm:gap-3 px-2.5 py-2.5 sm:px-3.5 sm:py-3">
         {/* Icono */}
         <div
-          className="grid w-12 h-12 transition-colors duration-200 border  place-items-center rounded-2xl bg-black/30 border-white/10 group-hover:border-white/20"
+          className="grid transition-colors duration-200 border rounded-full place-items-center w-11 h-11 sm:w-10 sm:h-10 sm:rounded-xl bg-black/30 border-white/10 group-hover:border-white/20 shrink-0"
         >
           <span
             className="
-              grid h-9 w-9 place-items-center
-              rounded-xl
+              grid place-items-center
+              h-8 w-8 sm:h-7 sm:w-7
+              rounded-full sm:rounded-lg
               bg-green-500/10 text-green-400
               transition-transform duration-200
-              group-hover:scale-[1.03]
+              group-hover:scale-[1.04]
             "
           >
-            <MessageCircle className="w-5 h-5" />
+            <MessageCircle className="w-4.5 h-4.5 sm:w-4 sm:h-4" />
           </span>
         </div>
 
-        {/* Texto (centrado y consistente) */}
-        <div className="flex flex-col justify-center leading-tight">
-          <div className="flex items-center gap-2">
-            <span className="text-[15px] sm:text-[16px] font-semibold text-white/90 tracking-wide">
+        {/* Texto: SIEMPRE visible */}
+        <div className="flex flex-col justify-center min-w-0 pr-1 leading-tight">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-[12px] md:text-[13px] font-semibold text-white/90 tracking-wide">
               ¿QUIERES
             </span>
-            <span className="text-[15px] sm:text-[16px] font-semibold text-red-500 tracking-wide">
+            <span className="text-[12px] md:text-[13px] font-semibold text-red-500 tracking-wide">
               ANUNCIARTE?
             </span>
           </div>
 
           <div
             className="
-              mt-1
-              text-[26px] sm:text-[30px]
-              font-extrabold
-              tracking-wide
-              text-white
+              mt-0.5
+              text-[16px] md:text-[18px] lg:text-[20px]
+              font-extrabold tracking-wide text-white
               transition-transform duration-200
               group-hover:translate-x-[1px]
+              whitespace-nowrap
             "
-            style={{
-              textShadow: "0 0 18px rgba(239,68,68,0.35)",
-            }}
+            style={{ textShadow: "0 0 14px rgba(239,68,68,0.28)" }}
           >
             {phoneDisplay}
           </div>
         </div>
       </div>
 
-      {/* Glow sutil en hover (sin cambiar colores base) */}
+      {/* Glow sutil */}
       <span
         aria-hidden="true"
-        className="absolute inset-0 transition-opacity duration-200 opacity-0 pointer-events-none  rounded-2xl group-hover:opacity-100"
+        className="absolute inset-0 transition-opacity duration-200 opacity-0 pointer-events-none rounded-2xl group-hover:opacity-100"
         style={{
-          boxShadow: "0 0 0 1px rgba(239,68,68,0.18), 0 0 30px rgba(239,68,68,0.10)",
+          boxShadow:
+            "0 0 0 1px rgba(239,68,68,0.16), 0 0 26px rgba(239,68,68,0.09)",
         }}
       />
     </a>
