@@ -8,6 +8,7 @@ import { AdminPage } from './pages/AdminPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { TermsPage } from './pages/TermsPage';
+import { WhatsAppFloat } from './components/WhatsAppFloat';
 export function App() {
   return <Router>
       <div className="min-h-screen bg-[#171717] text-white antialiased selection:bg-red-500/30 selection:text-red-200 flex flex-col">
@@ -23,6 +24,7 @@ export function App() {
           </Routes>
         </main>
         <Footer />
+				<WhatsAppFloat />
       </div>
     </Router>;
 }

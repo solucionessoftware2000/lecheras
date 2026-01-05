@@ -1,129 +1,160 @@
-import { useState, useEffect } from 'react';
-import { Listing } from '../types';
-const MOCK_LISTINGS: Listing[] = [{
-  id: '1',
-  name: 'Bella',
-  breed: 'Holstein',
-  age: 3,
-  price: 2500,
-  image: 'https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?q=80&w=2070&auto=format&fit=crop',
-  images: ['https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?q=80&w=2070&auto=format&fit=crop', 'https://images.unsplash.com/photo-1527153857715-3908f2bae5e8?q=80&w=1921&auto=format&fit=crop', 'https://images.unsplash.com/photo-1500595046743-cd271d694d30?q=80&w=2074&auto=format&fit=crop'],
-  description: 'Bella is a high-producing Holstein with an excellent pedigree. She is calm, easy to handle, and produces an average of 35 liters per day. Perfect for small to medium dairy operations looking for reliable production.',
-  seller: {
-    name: 'Green Pastures Farm',
-    location: 'Wisconsin, USA'
+import { useEffect, useState } from "react";
+import { Listing } from "../types";
+
+const MOCK_LISTINGS: Listing[] = [
+  {
+    id: "1",
+    name: "Valeria",
+    age: 23,
+    price: 250,
+    image:
+      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1600&auto=format&fit=crop",
+    images: [
+      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1600&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1520975958225-8d3a4f7f1a2b?q=80&w=1600&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1520975681889-b3b6f1b1d0f7?q=80&w=1600&auto=format&fit=crop",
+    ],
+    videos: ["https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"],
+    description:
+      "Perfil verificado. Atención con agenda previa. Trato amable y discreto. Se prioriza higiene y respeto.",
+    measurements: { waist: 62, height: 168, hips: 92, bust: 88 },
+    stats: { views: 18240, messages: 327 },
+    locations: ["Miraflores", "San Isidro", "Surco"],
+    liked: false,
   },
-  liked: false,
-  milkProduction: '35L/day'
-}, {
-  id: '2',
-  name: 'Luna',
-  breed: 'Jersey',
-  age: 2,
-  price: 1800,
-  image: 'https://images.unsplash.com/photo-1500595046743-cd271d694d30?q=80&w=2074&auto=format&fit=crop',
-  images: ['https://images.unsplash.com/photo-1500595046743-cd271d694d30?q=80&w=2074&auto=format&fit=crop', 'https://images.unsplash.com/photo-1545468860-71b95149235e?q=80&w=2069&auto=format&fit=crop'],
-  description: 'Luna is a beautiful Jersey heifer with high butterfat content milk. She is young, energetic, and comes from a lineage of award-winning Jerseys. Ideal for artisanal cheese makers.',
-  seller: {
-    name: 'Valley View Dairy',
-    location: 'Vermont, USA'
+  {
+    id: "2",
+    name: "Camila",
+    age: 25,
+    price: 300,
+    image:
+      "https://images.unsplash.com/photo-1524502397800-2eeaad7c3fe5?q=80&w=1600&auto=format&fit=crop",
+    images: [
+      "https://images.unsplash.com/photo-1524502397800-2eeaad7c3fe5?q=80&w=1600&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1520975732131-14f1e6b8a5b2?q=80&w=1600&auto=format&fit=crop",
+    ],
+    videos: [],
+    description:
+      "Atención solo adultos. Agenda previa. No llamadas ocultas. Experiencia premium y puntualidad.",
+    measurements: { waist: 64, height: 170, hips: 94, bust: 90 },
+    stats: { views: 9801, messages: 214 },
+    locations: ["Barranco", "Miraflores"],
+    liked: true,
   },
-  liked: true,
-  milkProduction: '22L/day'
-}, {
-  id: '3',
-  name: 'Daisy',
-  breed: 'Guernsey',
-  age: 4,
-  price: 2100,
-  image: 'https://images.unsplash.com/photo-1546445317-29f4545e9d53?q=80&w=2002&auto=format&fit=crop',
-  images: ['https://images.unsplash.com/photo-1546445317-29f4545e9d53?q=80&w=2002&auto=format&fit=crop', 'https://images.unsplash.com/photo-1596733430284-f7437764b1a9?q=80&w=2070&auto=format&fit=crop'],
-  description: 'Daisy produces the famous Golden Guernsey milk. She is a hardy cow, adaptable to various climates, and has a very docile temperament. Recently vetted and in perfect health.',
-  seller: {
-    name: 'Golden Milk Co.',
-    location: 'Ohio, USA'
+  {
+    id: "4",
+    name: "Sofía",
+    age: 24,
+    price: 280,
+    image:
+      "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1600&auto=format&fit=crop",
+    images: [
+      "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1600&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1524502397800-2eeaad7c3fe5?q=80&w=1600&auto=format&fit=crop",
+    ],
+    videos: [],
+    description:
+      "Atención con reserva. Puntualidad y discreción. Solo mayores de edad.",
+    measurements: { waist: 63, height: 167, hips: 93, bust: 89 },
+    stats: { views: 20110, messages: 401 },
+    locations: ["San Borja", "Surco"],
+    liked: false,
   },
-  liked: false,
-  milkProduction: '28L/day'
-}, {
-  id: '4',
-  name: 'Rosie',
-  breed: 'Ayrshire',
-  age: 3,
-  price: 2300,
-  image: 'https://images.unsplash.com/photo-1527153857715-3908f2bae5e8?q=80&w=1921&auto=format&fit=crop',
-  images: ['https://images.unsplash.com/photo-1527153857715-3908f2bae5e8?q=80&w=1921&auto=format&fit=crop', 'https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?q=80&w=2070&auto=format&fit=crop'],
-  description: 'Rosie is a robust Ayrshire known for longevity and health. She grazes well and converts grass efficiently. A great addition to any pasture-based dairy system.',
-  seller: {
-    name: 'Highland Farms',
-    location: 'Scotland, UK'
+  {
+    id: "8",
+    name: "Martina",
+    age: 23,
+    price: 240,
+    image:
+      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1600&auto=format&fit=crop",
+    images: [
+      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1600&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1600&auto=format&fit=crop",
+    ],
+    videos: [],
+    description:
+      "Atención con coordinación. Ambiente cómodo. Solo mayores de edad.",
+    measurements: { waist: 61, height: 166, hips: 91, bust: 87 },
+    stats: { views: 11220, messages: 198 },
+    locations: ["La Molina", "Surco"],
+    liked: true,
   },
-  liked: false,
-  milkProduction: '30L/day'
-}, {
-  id: '5',
-  name: 'Molly',
-  breed: 'Brown Swiss',
-  age: 5,
-  price: 2800,
-  image: 'https://images.unsplash.com/photo-1596733430284-f7437764b1a9?q=80&w=2070&auto=format&fit=crop',
-  images: ['https://images.unsplash.com/photo-1596733430284-f7437764b1a9?q=80&w=2070&auto=format&fit=crop', 'https://images.unsplash.com/photo-1546445317-29f4545e9d53?q=80&w=2002&auto=format&fit=crop'],
-  description: 'Molly is a powerhouse Brown Swiss with exceptional protein-to-fat ratio. She is large, strong, and has excellent feet and legs. Proven producer with 3 successful lactations.',
-  seller: {
-    name: 'Alpine Dairy',
-    location: 'Switzerland'
+  {
+    id: "9",
+    name: "Paula",
+    age: 28,
+    price: 380,
+    image:
+      "https://images.unsplash.com/photo-1517365830460-955ce3ccd263?q=80&w=1600&auto=format&fit=crop",
+    images: [
+      "https://images.unsplash.com/photo-1517365830460-955ce3ccd263?q=80&w=1600&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1600&auto=format&fit=crop",
+    ],
+    videos: ["https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"],
+    description:
+      "Experiencia exclusiva. Atención solo con reserva. Discreción total.",
+    measurements: { waist: 67, height: 173, hips: 98, bust: 94 },
+    stats: { views: 23045, messages: 522 },
+    locations: ["San Isidro", "Surquillo", "Miraflores"],
+    liked: false,
   },
-  liked: true,
-  milkProduction: '32L/day'
-}, {
-  id: '6',
-  name: 'Bessie',
-  breed: 'Holstein',
-  age: 2,
-  price: 2600,
-  image: 'https://images.unsplash.com/photo-1545468860-71b95149235e?q=80&w=2069&auto=format&fit=crop',
-  images: ['https://images.unsplash.com/photo-1545468860-71b95149235e?q=80&w=2069&auto=format&fit=crop', 'https://images.unsplash.com/photo-1500595046743-cd271d694d30?q=80&w=2074&auto=format&fit=crop'],
-  description: 'Bessie is a promising young Holstein heifer ready for her first calf. She shows great potential for high volume production and has a very friendly disposition.',
-  seller: {
-    name: 'Midwest Dairy',
-    location: 'Iowa, USA'
-  },
-  liked: false,
-  milkProduction: 'Pending'
-}];
+  {
+    id: "10",
+    name: "Isabella",
+    age: 22,
+    price: 210,
+    image:
+      "https://images.unsplash.com/photo-1524502397800-2eeaad7c3fe5?q=80&w=1600&auto=format&fit=crop",
+    images: [
+      "https://images.unsplash.com/photo-1524502397800-2eeaad7c3fe5?q=80&w=1600&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1520975681889-b3b6f1b1d0f7?q=80&w=1600&auto=format&fit=crop",
+    ],
+    videos: [],
+    description:
+      "Atención tranquila y discreta. Coordinación previa. Zonas seguras.",
+    measurements: { waist: 60, height: 163, hips: 90, bust: 86 },
+    stats: { views: 7604, messages: 102 },
+    locations: ["Breña", "Cercado de Lima"],
+    liked: false,
+  }
+];
+
 export function useListings() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    // Simulate network delay
     const timer = setTimeout(() => {
       setListings(MOCK_LISTINGS);
       setLoading(false);
-    }, 1500);
+    }, 900);
     return () => clearTimeout(timer);
   }, []);
+
   const toggleLike = (id: string) => {
-    setListings(prev => prev.map(item => item.id === id ? {
-      ...item,
-      liked: !item.liked
-    } : item));
+    setListings((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, liked: !item.liked } : item))
+    );
   };
-  const addListing = (newListing: Omit<Listing, 'id' | 'liked'>) => {
+
+  const addListing = (newListing: Omit<Listing, "id" | "liked">) => {
     const listing: Listing = {
       ...newListing,
-      id: Math.random().toString(36).substr(2, 9),
-      liked: false
+      id: Math.random().toString(36).slice(2, 11),
+      liked: false,
     };
-    setListings(prev => [listing, ...prev]);
+    setListings((prev) => [listing, ...prev]);
   };
+
   const getListing = (id: string) => {
-    return listings.find(l => l.id === id) || MOCK_LISTINGS.find(l => l.id === id);
+    return listings.find((l) => l.id === id) || MOCK_LISTINGS.find((l) => l.id === id);
   };
+
   return {
     listings,
     loading,
     toggleLike,
     addListing,
-    getListing
+    getListing,
   };
 }
