@@ -115,18 +115,18 @@ export function ListingDetailPage() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen bg-[#171717] pb-20 pt-8"
+      className="min-h-screen bg-[#171717] pb-16 sm:pb-20 pt-6 sm:pt-8"
     >
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 mb-8 text-sm font-medium transition-colors text-neutral-400 hover:text-white"
+          className="inline-flex items-center gap-2 mb-6 text-sm font-medium transition-colors sm:mb-8 text-neutral-400 hover:text-white"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Marketplace
         </Link>
 
-        <div className="grid gap-12 lg:grid-cols-2">
+        <div className="grid gap-8 md:gap-12 lg:grid-cols-2">
           {/* Left Column: Gallery */}
           <div>
             <ImageGallery
@@ -139,26 +139,29 @@ export function ListingDetailPage() {
           {/* Right Column: Details */}
           <div className="flex flex-col">
             {/* Header */}
-            <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-start sm:justify-between">
-              <div>
-                <h1 className="mb-2 text-4xl font-bold text-white">{listing.name}</h1>
+            <div className="flex flex-col gap-4 mb-5 sm:mb-6 md:flex-row md:items-start md:justify-between">
+              {/* Left info */}
+              <div className="min-w-0">
+                <h1 className="mb-2 text-2xl font-bold text-white break-words sm:text-3xl lg:text-4xl">
+                  {listing.name}
+                </h1>
 
-                <div className="flex flex-wrap items-center gap-3 text-neutral-400">
-                  <span className="px-3 py-1 text-sm font-medium text-white rounded-full bg-white/10">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-neutral-400">
+                  <span className="px-3 py-1 text-xs font-medium text-white rounded-full sm:text-sm bg-white/10">
                     {listing.age} años
                   </span>
 
-                  <span className="flex items-center gap-1 text-sm">
-                    <MapPin className="w-4 h-4" />
-                    {primaryLocation}
+                  <span className="flex items-center min-w-0 gap-1 text-xs sm:text-sm">
+                    <MapPin className="w-4 h-4 shrink-0" />
+                    <span className="truncate">{primaryLocation}</span>
                   </span>
                 </div>
 
-                {/* ✅ Mini fila de contactos debajo del header */}
-                <div className="flex flex-wrap items-center gap-2 mt-4">
+                {/* ✅ Contactos: en móvil se apilan, en sm+ van en 3 cols */}
+                <div className="grid grid-cols-1 gap-2 mt-4 sm:grid-cols-3">
                   <button
                     onClick={handleCall}
-                    className="inline-flex items-center gap-2 px-3 py-2 text-sm text-white border rounded-xl border-white/10 bg-white/5 hover:bg-white/10"
+                    className="inline-flex items-center justify-center w-full gap-2 px-3 py-2 text-sm text-white border rounded-xl border-white/10 bg-white/5 hover:bg-white/10"
                   >
                     <Phone className="w-4 h-4" />
                     Teléfono
@@ -166,7 +169,7 @@ export function ListingDetailPage() {
 
                   <button
                     onClick={handleWhatsApp}
-                    className="inline-flex items-center gap-2 px-3 py-2 text-sm text-white border rounded-xl border-white/10 bg-white/5 hover:bg-white/10"
+                    className="inline-flex items-center justify-center w-full gap-2 px-3 py-2 text-sm text-white border rounded-xl border-white/10 bg-white/5 hover:bg-white/10"
                   >
                     <MessageCircle className="w-4 h-4" />
                     WhatsApp
@@ -174,7 +177,7 @@ export function ListingDetailPage() {
 
                   <button
                     onClick={handleTelegram}
-                    className="inline-flex items-center gap-2 px-3 py-2 text-sm text-white border rounded-xl border-white/10 bg-white/5 hover:bg-white/10"
+                    className="inline-flex items-center justify-center w-full gap-2 px-3 py-2 text-sm text-white border rounded-xl border-white/10 bg-white/5 hover:bg-white/10"
                   >
                     <Send className="w-4 h-4" />
                     Telegram
@@ -183,7 +186,7 @@ export function ListingDetailPage() {
               </div>
 
               {/* Stats */}
-              <div className="rounded-xl bg-[#1F1F1F] border border-white/5 p-4 sm:min-w-[220px]">
+              <div className="w-full md:w-auto rounded-xl bg-[#1F1F1F] border border-white/5 p-4 md:min-w-[220px]">
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 border rounded-lg bg-black/30 border-white/10">
                     <div className="flex items-center gap-2 text-xs text-neutral-400">
@@ -209,44 +212,60 @@ export function ListingDetailPage() {
             </div>
 
             {/* Descripción */}
-            <div className="mb-6 rounded-xl bg-[#1F1F1F] p-6 border border-white/5">
-              <h2 className="mb-4 text-lg font-semibold text-white">Descripción</h2>
-              <p className="leading-relaxed text-neutral-400">{listing.description}</p>
+            <div className="mb-5 sm:mb-6 rounded-xl bg-[#1F1F1F] p-4 sm:p-6 border border-white/5">
+              <h2 className="mb-3 text-base font-semibold text-white sm:mb-4 sm:text-lg">
+                Descripción
+              </h2>
+              <p className="text-sm leading-relaxed sm:text-base text-neutral-400">
+                {listing.description}
+              </p>
             </div>
 
             {/* Measurements */}
-            <div className="mb-6 rounded-xl bg-[#1F1F1F] p-6 border border-white/5">
-              <div className="flex items-center gap-2 mb-4">
+            <div className="mb-5 sm:mb-6 rounded-xl bg-[#1F1F1F] p-4 sm:p-6 border border-white/5">
+              <div className="flex items-center gap-2 mb-3 sm:mb-4">
                 <Ruler className="w-5 h-5 text-neutral-300" />
-                <h2 className="text-lg font-semibold text-white">Medidas</h2>
+                <h2 className="text-base font-semibold text-white sm:text-lg">
+                  Medidas
+                </h2>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
                 <div className="p-4 border rounded-lg border-white/10 bg-black/20">
                   <div className="text-sm text-neutral-500">Cintura</div>
-                  <div className="font-medium text-white">{listing.measurements.waist} cm</div>
+                  <div className="font-medium text-white">
+                    {listing.measurements.waist} cm
+                  </div>
                 </div>
 
                 <div className="p-4 border rounded-lg border-white/10 bg-black/20">
                   <div className="text-sm text-neutral-500">Estatura</div>
-                  <div className="font-medium text-white">{listing.measurements.height} cm</div>
+                  <div className="font-medium text-white">
+                    {listing.measurements.height} cm
+                  </div>
                 </div>
 
                 <div className="p-4 border rounded-lg border-white/10 bg-black/20">
                   <div className="text-sm text-neutral-500">Caderas</div>
-                  <div className="font-medium text-white">{listing.measurements.hips} cm</div>
+                  <div className="font-medium text-white">
+                    {listing.measurements.hips} cm
+                  </div>
                 </div>
 
                 <div className="p-4 border rounded-lg border-white/10 bg-black/20">
                   <div className="text-sm text-neutral-500">Busto</div>
-                  <div className="font-medium text-white">{listing.measurements.bust} cm</div>
+                  <div className="font-medium text-white">
+                    {listing.measurements.bust} cm
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Locations */}
-            <div className="mb-8 rounded-xl bg-[#1F1F1F] p-6 border border-white/5">
-              <h2 className="mb-4 text-lg font-semibold text-white">Lugares de atención</h2>
+            <div className="mb-6 sm:mb-8 rounded-xl bg-[#1F1F1F] p-4 sm:p-6 border border-white/5">
+              <h2 className="mb-3 text-base font-semibold text-white sm:mb-4 sm:text-lg">
+                Lugares de atención
+              </h2>
 
               <div className="flex flex-wrap gap-2">
                 {listing.locations.map((loc) => (
@@ -265,64 +284,73 @@ export function ListingDetailPage() {
             </div>
 
             {/* Actions */}
-            <div className="flex gap-4 mt-auto">
-              {/* ✅ Ahora Contactar = WhatsApp */}
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={handleWhatsApp}
-                className="flex-1 py-4 font-bold text-center text-white transition-colors bg-red-600 shadow-lg rounded-xl shadow-red-500/20 hover:bg-red-500"
-              >
-                WhatsApp
-              </motion.button>
+            <div className="mt-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto_auto] gap-3 sm:gap-4">
+                {/* WhatsApp full */}
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleWhatsApp}
+                  className="w-full py-4 font-bold text-center text-white transition-colors bg-red-600 shadow-lg rounded-xl shadow-red-500/20 hover:bg-red-500"
+                >
+                  WhatsApp
+                </motion.button>
 
-              {/* ✅ Teléfono */}
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={handleCall}
-                className="flex items-center justify-center rounded-xl border border-white/10 bg-[#1F1F1F] px-6 text-white hover:bg-white/5"
-                aria-label="Llamar"
-                title="Llamar"
-              >
-                <Phone className="w-6 h-6" />
-              </motion.button>
+                {/* Teléfono */}
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleCall}
+                  className="h-14 w-full sm:w-14 flex items-center justify-center rounded-xl border border-white/10 bg-[#1F1F1F] text-white hover:bg-white/5"
+                  aria-label="Llamar"
+                  title="Llamar"
+                >
+                  <Phone className="w-6 h-6" />
+                </motion.button>
 
-              {/* ✅ Telegram */}
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={handleTelegram}
-                className="flex items-center justify-center rounded-xl border border-white/10 bg-[#1F1F1F] px-6 text-white hover:bg-white/5"
-                aria-label="Telegram"
-                title="Telegram"
-              >
-                <Send className="w-6 h-6" />
-              </motion.button>
+                {/* Telegram */}
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleTelegram}
+                  className="h-14 w-full sm:w-14 flex items-center justify-center rounded-xl border border-white/10 bg-[#1F1F1F] text-white hover:bg-white/5"
+                  aria-label="Telegram"
+                  title="Telegram"
+                >
+                  <Send className="w-6 h-6" />
+                </motion.button>
 
-              {/* Like */}
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => toggleLike(listing.id)}
-                className={`flex items-center justify-center rounded-xl border px-6 transition-colors ${
-                  listing.liked
-                    ? "border-red-500 bg-red-500/10 text-red-500"
-                    : "border-white/10 bg-[#1F1F1F] text-white hover:bg-white/5"
-                }`}
-              >
-                <Heart className={`h-6 w-6 ${listing.liked ? "fill-current" : ""}`} />
-              </motion.button>
+                {/* Like */}
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => toggleLike(listing.id)}
+                  className={`h-14 w-full sm:w-14 flex items-center justify-center rounded-xl border transition-colors ${
+                    listing.liked
+                      ? "border-red-500 bg-red-500/10 text-red-500"
+                      : "border-white/10 bg-[#1F1F1F] text-white hover:bg-white/5"
+                  }`}
+                  aria-label={listing.liked ? "Quitar like" : "Dar like"}
+                  title={listing.liked ? "Quitar like" : "Dar like"}
+                >
+                  <Heart className={`h-6 w-6 ${listing.liked ? "fill-current" : ""}`} />
+                </motion.button>
+              </div>
 
-              {/* Share */}
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={handleShare}
-                className="flex items-center justify-center rounded-xl border border-white/10 bg-[#1F1F1F] px-6 text-white hover:bg-white/5"
-              >
-                <Share2 className="w-6 h-6" />
-              </motion.button>
+              {/* Share abajo solo si quieres, o lo dejamos en el grid:
+                  Si prefieres compartir siempre visible, lo meto al grid como otro icono.
+              */}
+              <div className="mt-3 sm:mt-4">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleShare}
+                  className="w-full flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-[#1F1F1F] px-6 py-3 text-white hover:bg-white/5"
+                >
+                  <Share2 className="w-5 h-5" />
+                  Compartir
+                </motion.button>
+              </div>
             </div>
           </div>
         </div>
