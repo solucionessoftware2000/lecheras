@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { motion } from 'framer-motion';
 export function SkeletonCard() {
   return <div className="relative overflow-hidden rounded-xl bg-[#1F1F1F] p-4 shadow-lg border border-white/5">

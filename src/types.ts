@@ -25,14 +25,18 @@ export interface Listing {
 
   locations: string[];
 
-  // ✅ NUEVO: contactos
   contact: {
-    phone: string; // formato: 51936615158 (o con +51, igual lo normalizamos)
-    whatsapp: string; // formato: 51936615158
-    telegram: string; // URL: https://t.me/usuario  (recomendado)
+    phone: string;
+    whatsapp: string;
+    telegram: string; // URL: https://t.me/usuario
   };
 
   liked: boolean;
 }
 
 export type SortOption = "price-asc" | "price-desc" | "newest";
+
+/** ✅ Nuevo: items para el marketplace (listings + cards de anuncio) */
+export type MarketplaceItem =
+  | { kind: "listing"; listing: Listing }
+  | { kind: "ad"; id: string };
