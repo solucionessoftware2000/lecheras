@@ -3,32 +3,34 @@ export interface Listing {
   name: string;
   age: number;
 
-  // Mantengo price porque tu UI actual lo muestra en el card (tag arriba a la derecha)
   price: number;
 
-  // Para el card (cover)
   image: string;
-
-  // Galería
   images: string[];
-  videos?: string[]; // URLs mp4/webm, etc.
+  videos?: string[];
 
   description: string;
 
-  // Nuevas secciones
   measurements: {
-    waist: number; // cintura
-    height: number; // estatura
-    hips: number; // caderas
-    bust: number; // busto
+    waist: number;
+    height: number;
+    hips: number;
+    bust: number;
   };
 
   stats: {
-    views: number; // la vieron
-    messages: number; // escribieron
+    views: number;
+    messages: number;
   };
 
-  locations: string[]; // lugares de atención
+  locations: string[];
+
+  // ✅ NUEVO: contactos
+  contact: {
+    phone: string; // formato: 51936615158 (o con +51, igual lo normalizamos)
+    whatsapp: string; // formato: 51936615158
+    telegram: string; // URL: https://t.me/usuario  (recomendado)
+  };
 
   liked: boolean;
 }

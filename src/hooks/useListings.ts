@@ -20,6 +20,11 @@ const MOCK_LISTINGS: Listing[] = [
     measurements: { waist: 62, height: 168, hips: 92, bust: 88 },
     stats: { views: 18240, messages: 327 },
     locations: ["Miraflores", "San Isidro", "Surco"],
+    contact: {
+      phone: "51936615158",
+      whatsapp: "51936615158",
+      telegram: "https://t.me/itapp_demo", // cambia a tu user real
+    },
     liked: false,
   },
   {
@@ -39,6 +44,11 @@ const MOCK_LISTINGS: Listing[] = [
     measurements: { waist: 64, height: 170, hips: 94, bust: 90 },
     stats: { views: 9801, messages: 214 },
     locations: ["Barranco", "Miraflores"],
+    contact: {
+      phone: "51936615158",
+      whatsapp: "51936615158",
+      telegram: "https://t.me/itapp_demo",
+    },
     liked: true,
   },
   {
@@ -53,11 +63,15 @@ const MOCK_LISTINGS: Listing[] = [
       "https://images.unsplash.com/photo-1524502397800-2eeaad7c3fe5?q=80&w=1600&auto=format&fit=crop",
     ],
     videos: [],
-    description:
-      "Atención con reserva. Puntualidad y discreción. Solo mayores de edad.",
+    description: "Atención con reserva. Puntualidad y discreción. Solo mayores de edad.",
     measurements: { waist: 63, height: 167, hips: 93, bust: 89 },
     stats: { views: 20110, messages: 401 },
     locations: ["San Borja", "Surco"],
+    contact: {
+      phone: "51936615158",
+      whatsapp: "51936615158",
+      telegram: "https://t.me/itapp_demo",
+    },
     liked: false,
   },
   {
@@ -72,11 +86,15 @@ const MOCK_LISTINGS: Listing[] = [
       "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1600&auto=format&fit=crop",
     ],
     videos: [],
-    description:
-      "Atención con coordinación. Ambiente cómodo. Solo mayores de edad.",
+    description: "Atención con coordinación. Ambiente cómodo. Solo mayores de edad.",
     measurements: { waist: 61, height: 166, hips: 91, bust: 87 },
     stats: { views: 11220, messages: 198 },
     locations: ["La Molina", "Surco"],
+    contact: {
+      phone: "51936615158",
+      whatsapp: "51936615158",
+      telegram: "https://t.me/itapp_demo",
+    },
     liked: true,
   },
   {
@@ -91,11 +109,15 @@ const MOCK_LISTINGS: Listing[] = [
       "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1600&auto=format&fit=crop",
     ],
     videos: ["https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"],
-    description:
-      "Experiencia exclusiva. Atención solo con reserva. Discreción total.",
+    description: "Experiencia exclusiva. Atención solo con reserva. Discreción total.",
     measurements: { waist: 67, height: 173, hips: 98, bust: 94 },
     stats: { views: 23045, messages: 522 },
     locations: ["San Isidro", "Surquillo", "Miraflores"],
+    contact: {
+      phone: "51936615158",
+      whatsapp: "51936615158",
+      telegram: "https://t.me/itapp_demo",
+    },
     liked: false,
   },
   {
@@ -110,13 +132,17 @@ const MOCK_LISTINGS: Listing[] = [
       "https://images.unsplash.com/photo-1520975681889-b3b6f1b1d0f7?q=80&w=1600&auto=format&fit=crop",
     ],
     videos: [],
-    description:
-      "Atención tranquila y discreta. Coordinación previa. Zonas seguras.",
+    description: "Atención tranquila y discreta. Coordinación previa. Zonas seguras.",
     measurements: { waist: 60, height: 163, hips: 90, bust: 86 },
     stats: { views: 7604, messages: 102 },
     locations: ["Breña", "Cercado de Lima"],
+    contact: {
+      phone: "51936615158",
+      whatsapp: "51936615158",
+      telegram: "https://t.me/itapp_demo",
+    },
     liked: false,
-  }
+  },
 ];
 
 export function useListings() {

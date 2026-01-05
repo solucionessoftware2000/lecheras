@@ -9,12 +9,17 @@ import {
   Eye,
   MessageSquareText,
   Ruler,
+  Phone,
+  Send,
+  MessageCircle,
 } from "lucide-react";
 import { useListings } from "../hooks/useListings";
 import { ImageGallery } from "../components/ImageGallery";
 import { Listing } from "../types";
 
-const WHATSAPP_PHONE = "51936615158";
+function normalizePhone(phone: string) {
+  return phone.replace(/\D/g, "");
+}
 
 function buildWhatsAppLink(params: { phone: string; text: string }) {
   const base = "https://api.whatsapp.com/send/";
@@ -43,13 +48,7 @@ export function ListingDetailPage() {
     [listing]
   );
 
-  // URL actual para compartir (funciona en prod). En local también.
-  const currentUrl = useMemo(() => {
-    if (typeof window === "undefined") return "";
-    return window.location.href;
-  }, []);
-
-  const handleContact = () => {
+  const handleWhatsApp = () => {
     if (!listing) return;
 
     const locs =
@@ -65,8 +64,20 @@ export function ListingDetailPage() {
       `Link: ${window.location.href}`,
     ].join("\n");
 
-    const wa = buildWhatsAppLink({ phone: WHATSAPP_PHONE, text });
+    const waPhone = normalizePhone(listing.contact.whatsapp);
+    const wa = buildWhatsAppLink({ phone: waPhone, text });
     window.open(wa, "_blank", "noopener,noreferrer");
+  };
+
+  const handleCall = () => {
+    if (!listing) return;
+    const phone = normalizePhone(listing.contact.phone);
+    window.location.href = `tel:+${phone}`;
+  };
+
+  const handleTelegram = () => {
+    if (!listing) return;
+    window.open(listing.contact.telegram, "_blank", "noopener,noreferrer");
   };
 
   const handleShare = async () => {
@@ -77,24 +88,18 @@ export function ListingDetailPage() {
       : "Mira este perfil";
 
     try {
-      // Web Share API (móvil / algunos navegadores)
       if (navigator.share) {
         await navigator.share({ title, text, url });
         return;
       }
-
-      // Fallback: copiar al portapapeles
       if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(url);
         alert("Enlace copiado ✅");
         return;
       }
-
-      // Último fallback
       window.prompt("Copia este enlace:", url);
     } catch {
-      // Si el usuario cancela share o falla
-      // no hacemos nada o mostramos mensaje suave
+      // ignore
     }
   };
 
@@ -148,6 +153,33 @@ export function ListingDetailPage() {
                     {primaryLocation}
                   </span>
                 </div>
+
+                {/* ✅ Mini fila de contactos debajo del header */}
+                <div className="flex flex-wrap items-center gap-2 mt-4">
+                  <button
+                    onClick={handleCall}
+                    className="inline-flex items-center gap-2 px-3 py-2 text-sm text-white border rounded-xl border-white/10 bg-white/5 hover:bg-white/10"
+                  >
+                    <Phone className="w-4 h-4" />
+                    Teléfono
+                  </button>
+
+                  <button
+                    onClick={handleWhatsApp}
+                    className="inline-flex items-center gap-2 px-3 py-2 text-sm text-white border rounded-xl border-white/10 bg-white/5 hover:bg-white/10"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    WhatsApp
+                  </button>
+
+                  <button
+                    onClick={handleTelegram}
+                    className="inline-flex items-center gap-2 px-3 py-2 text-sm text-white border rounded-xl border-white/10 bg-white/5 hover:bg-white/10"
+                  >
+                    <Send className="w-4 h-4" />
+                    Telegram
+                  </button>
+                </div>
               </div>
 
               {/* Stats */}
@@ -192,30 +224,22 @@ export function ListingDetailPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-4 border rounded-lg border-white/10 bg-black/20">
                   <div className="text-sm text-neutral-500">Cintura</div>
-                  <div className="font-medium text-white">
-                    {listing.measurements.waist} cm
-                  </div>
+                  <div className="font-medium text-white">{listing.measurements.waist} cm</div>
                 </div>
 
                 <div className="p-4 border rounded-lg border-white/10 bg-black/20">
                   <div className="text-sm text-neutral-500">Estatura</div>
-                  <div className="font-medium text-white">
-                    {listing.measurements.height} cm
-                  </div>
+                  <div className="font-medium text-white">{listing.measurements.height} cm</div>
                 </div>
 
                 <div className="p-4 border rounded-lg border-white/10 bg-black/20">
                   <div className="text-sm text-neutral-500">Caderas</div>
-                  <div className="font-medium text-white">
-                    {listing.measurements.hips} cm
-                  </div>
+                  <div className="font-medium text-white">{listing.measurements.hips} cm</div>
                 </div>
 
                 <div className="p-4 border rounded-lg border-white/10 bg-black/20">
                   <div className="text-sm text-neutral-500">Busto</div>
-                  <div className="font-medium text-white">
-                    {listing.measurements.bust} cm
-                  </div>
+                  <div className="font-medium text-white">{listing.measurements.bust} cm</div>
                 </div>
               </div>
             </div>
@@ -242,15 +266,41 @@ export function ListingDetailPage() {
 
             {/* Actions */}
             <div className="flex gap-4 mt-auto">
+              {/* ✅ Ahora Contactar = WhatsApp */}
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={handleContact}
+                onClick={handleWhatsApp}
                 className="flex-1 py-4 font-bold text-center text-white transition-colors bg-red-600 shadow-lg rounded-xl shadow-red-500/20 hover:bg-red-500"
               >
-                Contactar
+                WhatsApp
               </motion.button>
 
+              {/* ✅ Teléfono */}
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleCall}
+                className="flex items-center justify-center rounded-xl border border-white/10 bg-[#1F1F1F] px-6 text-white hover:bg-white/5"
+                aria-label="Llamar"
+                title="Llamar"
+              >
+                <Phone className="w-6 h-6" />
+              </motion.button>
+
+              {/* ✅ Telegram */}
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleTelegram}
+                className="flex items-center justify-center rounded-xl border border-white/10 bg-[#1F1F1F] px-6 text-white hover:bg-white/5"
+                aria-label="Telegram"
+                title="Telegram"
+              >
+                <Send className="w-6 h-6" />
+              </motion.button>
+
+              {/* Like */}
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -264,6 +314,7 @@ export function ListingDetailPage() {
                 <Heart className={`h-6 w-6 ${listing.liked ? "fill-current" : ""}`} />
               </motion.button>
 
+              {/* Share */}
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
