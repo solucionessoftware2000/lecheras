@@ -179,7 +179,7 @@ export function ListingDetailPage() {
                   </span>
                 </div>
 
-                {/* ✅ Contactos: en móvil se apilan, en sm+ van en 3 cols */}
+                {/* ✅ Contactos (ÚNICO LUGAR: arriba) */}
                 <div className="grid grid-cols-1 gap-2 mt-4 sm:grid-cols-3">
                   <button
                     onClick={handleCall}
@@ -193,7 +193,6 @@ export function ListingDetailPage() {
                     onClick={handleWhatsApp}
                     className="inline-flex items-center justify-center w-full gap-2 px-3 py-2 text-sm text-white border rounded-xl border-white/10 bg-white/5 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/40"
                   >
-                    {/* ✅ WhatsApp real */}
                     <FaWhatsapp className="w-4 h-4 text-green-400" />
                     WhatsApp
                   </button>
@@ -202,7 +201,6 @@ export function ListingDetailPage() {
                     onClick={handleTelegram}
                     className="inline-flex items-center justify-center w-full gap-2 px-3 py-2 text-sm text-white border rounded-xl border-white/10 bg-white/5 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/40"
                   >
-                    {/* ✅ Telegram real */}
                     <FaTelegramPlane className="w-4 h-4 text-sky-400" />
                     Telegram
                   </button>
@@ -307,46 +305,9 @@ export function ListingDetailPage() {
               )}
             </div>
 
-            {/* Actions */}
+            {/* Actions (ÚNICO: Like + Share) */}
             <div className="mt-auto">
-              <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto_auto] gap-3 sm:gap-4">
-                {/* WhatsApp full */}
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleWhatsApp}
-                  className="w-full py-4 font-bold text-center text-white transition-colors bg-red-600 shadow-lg rounded-xl shadow-red-500/20 hover:bg-red-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/40"
-                >
-                  <span className="inline-flex items-center justify-center gap-2">
-                    <FaWhatsapp className="w-5 h-5 text-green-200" />
-                    WhatsApp
-                  </span>
-                </motion.button>
-
-                {/* Teléfono */}
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleCall}
-                  className="h-14 w-full sm:w-14 flex items-center justify-center rounded-xl border border-white/10 bg-[#1F1F1F] text-white hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/40"
-                  aria-label="Llamar"
-                  title="Llamar"
-                >
-                  <Phone className="w-6 h-6" />
-                </motion.button>
-
-                {/* Telegram */}
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleTelegram}
-                  className="h-14 w-full sm:w-14 flex items-center justify-center rounded-xl border border-white/10 bg-[#1F1F1F] text-white hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/40"
-                  aria-label="Telegram"
-                  title="Telegram"
-                >
-                  <FaTelegramPlane className="w-6 h-6 text-sky-300" />
-                </motion.button>
-
+              <div className="grid grid-cols-1 sm:grid-cols-[auto_1fr] gap-3 sm:gap-4">
                 {/* Like (vaso de leche) */}
                 <motion.button
                   whileHover={{ scale: 1.02 }}
@@ -365,10 +326,8 @@ export function ListingDetailPage() {
                     filled={listing.liked}
                   />
                 </motion.button>
-              </div>
 
-              {/* Share */}
-              <div className="mt-3 sm:mt-4">
+                {/* Share (full width) */}
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
