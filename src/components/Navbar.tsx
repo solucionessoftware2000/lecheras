@@ -25,7 +25,7 @@ export function Navbar() {
             scale: 0.98
           }} className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white transition-colors bg-red-600 rounded-lg shadow-lg shadow-red-500/20 hover:bg-red-500">
               <User className="w-4 h-4" />
-              <span>Anunciarme</span>
+              <span>Iniciar Sesión</span>
             </motion.button>
           </Link>
         </div>

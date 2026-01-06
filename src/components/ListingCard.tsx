@@ -1,13 +1,13 @@
 import React from "react";
 import { motion } from "framer-motion";
 import {
-  Heart,
   MapPin,
   ArrowRight,
   Phone,
   Send,
   MessageCircle,
   Plus,
+  BadgeCheck,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { MarketplaceItem } from "../types";
@@ -34,6 +34,35 @@ function buildWhatsAppLink(params: { phone: string; text: string }) {
   return url.toString();
 }
 
+/** ✅ Icono vaso de leche (custom). Con fill-current se "llena" cuando liked=true */
+function MilkGlassIcon({
+  className,
+  filled,
+}: {
+  className?: string;
+  filled?: boolean;
+}) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      aria-hidden="true"
+      fill={filled ? "currentColor" : "none"}
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {/* borde del vaso */}
+      <path d="M7 3h10l-1.2 17.2A2 2 0 0 1 13.81 22h-3.62a2 2 0 0 1-1.99-1.8L7 3z" />
+      {/* línea superior */}
+      <path d="M7.2 6.5h9.6" />
+      {/* nivel (solo visual cuando no está filled; cuando filled se verá sólido igual) */}
+      {!filled && <path d="M8 10.5h8" opacity="0.75" />}
+    </svg>
+  );
+}
+
 export function ListingCard({ item, onToggleLike }: ListingCardProps) {
   const navigate = useNavigate();
 
@@ -50,7 +79,6 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
         className="group relative flex flex-col overflow-hidden rounded-xl bg-[#1F1F1F] shadow-lg shadow-black/20 border border-white/5 cursor-pointer"
       >
-        {/* “Imagen” fake con el mismo aspect */}
         <div className="relative aspect-[4/3] overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-t from-[#1F1F1F] via-black/30 to-black/10 opacity-90" />
           <div className="absolute inset-0 grid place-items-center">
@@ -67,13 +95,11 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
             </div>
           </div>
 
-          {/* Tag arriba derecha para que se parezca a Price */}
           <div className="absolute z-20 px-3 py-1 text-sm font-semibold text-white border rounded-full top-4 right-4 bg-black/60 backdrop-blur-md border-white/10">
             + Cupo
           </div>
         </div>
 
-        {/* Footer igual al estilo */}
         <div className="flex flex-col flex-1 p-5">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
@@ -139,6 +165,14 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
           className="object-cover w-full h-full"
         />
 
+        {/* ✅ VIP Badge (verde con check) */}
+        <div className="absolute z-20 top-4 left-4">
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/25 bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-300 backdrop-blur">
+            <BadgeCheck className="w-4 h-4 text-emerald-300" />
+            VIP verificada de Lima
+          </div>
+        </div>
+
         {/* Price Tag */}
         <div className="absolute z-20 px-3 py-1 text-sm font-semibold text-white border rounded-full top-4 right-4 bg-black/60 backdrop-blur-md border-white/10">
           ${listing.price.toLocaleString()}
@@ -146,7 +180,6 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
 
         {/* Contact Icons (sobre la imagen, abajo-izq) */}
         <div className="absolute z-20 flex items-center gap-2 left-4 bottom-4">
-          {/* Tel */}
           <a
             href={`tel:+${phone}`}
             onClick={(e) => e.stopPropagation()}
@@ -157,7 +190,6 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
             <Phone className="w-4 h-4" />
           </a>
 
-          {/* WhatsApp */}
           <a
             href={waUrl}
             target="_blank"
@@ -170,7 +202,6 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
             <MessageCircle className="w-4 h-4" />
           </a>
 
-          {/* Telegram */}
           <a
             href={tgUrl}
             target="_blank"
@@ -187,9 +218,8 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
 
       {/* Content */}
       <div className="flex flex-col flex-1 p-5">
-        {/* Fila: Nombre + Edad + Lugar  |  Corazón */}
+        {/* Fila: Nombre + Edad + Lugar  |  Like (vaso de leche) */}
         <div className="flex items-center justify-between gap-3">
-          {/* izquierda: texto */}
           <div className="flex items-center flex-1 min-w-0 gap-3">
             <h3 className="min-w-0 truncate text-[18px] font-bold text-white transition-colors group-hover:text-red-500">
               {listing.name}
@@ -205,6 +235,7 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
             </span>
           </div>
 
+          {/* ✅ Like con vaso de leche */}
           <motion.button
             whileTap={{ scale: 0.8 }}
             onClick={(e) => {
@@ -214,13 +245,16 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
             }}
             className={`shrink-0 rounded-full p-2 transition-colors ${
               listing.liked
-                ? "bg-red-500/10 text-red-500"
+                ? "bg-white/10 text-white"
                 : "bg-neutral-800 text-neutral-400 hover:bg-neutral-700 hover:text-white"
             }`}
             aria-label={listing.liked ? "Quitar like" : "Dar like"}
             title={listing.liked ? "Quitar like" : "Dar like"}
           >
-            <Heart className={`h-5 w-5 ${listing.liked ? "fill-current" : ""}`} />
+            <MilkGlassIcon
+              className={`h-5 w-5 ${listing.liked ? "fill-current" : ""}`}
+              filled={listing.liked}
+            />
           </motion.button>
         </div>
 

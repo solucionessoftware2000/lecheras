@@ -86,19 +86,8 @@ export function MarketplacePage() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-4 text-4xl font-bold tracking-tight text-white md:text-5xl"
           >
-            La mejor <span className="text-red-500">Selección</span> de Lecheras de
-            lima
+            Vip <span className="text-red-500">Verificadas</span> de lima
           </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.1 }}
-            className="max-w-2xl mx-auto text-lg text-neutral-400"
-          >
-            Descubre la elite de nuestras lecheras lima, navega y busca a quien mas
-            te guste :3
-          </motion.p>
         </div>
 
         {/* Filters & Search */}

@@ -123,7 +123,7 @@ export function ListingDetailPage() {
           className="inline-flex items-center gap-2 mb-6 text-sm font-medium transition-colors sm:mb-8 text-neutral-400 hover:text-white"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Marketplace
+          Seleccionar otra lechera
         </Link>
 
         <div className="grid gap-8 md:gap-12 lg:grid-cols-2">

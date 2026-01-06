@@ -5,7 +5,7 @@ const MOCK_LISTINGS: Listing[] = [
   {
     id: "1",
     name: "Valeria",
-    age: 23,
+    age: 20,
     price: 250,
     image:
       "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1600&auto=format&fit=crop",
@@ -17,9 +17,9 @@ const MOCK_LISTINGS: Listing[] = [
     videos: ["https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"],
     description:
       "Perfil verificado. Atención con agenda previa. Trato amable y discreto. Se prioriza higiene y respeto.",
-    measurements: { waist: 62, height: 168, hips: 92, bust: 88 },
+    measurements: { waist: 62, height: 165, hips: 92, bust: 88 },
     stats: { views: 18240, messages: 327 },
-    locations: ["Miraflores", "San Isidro", "Surco"],
+    locations: ["Lince"],
     contact: {
       phone: "51936615158",
       whatsapp: "51936615158",
