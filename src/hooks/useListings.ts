@@ -1,45 +1,44 @@
+// src/hooks/useListings.ts
 import { useEffect, useMemo, useState } from "react";
 import { Listing, MarketplaceItem } from "../types";
-
-const MOCK_LISTINGS: Listing[] = [
-  {
-    id: "1",
-    name: "Valeria",
-    age: 20,
-    price: 250,
-    image:
-      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1600&auto=format&fit=crop",
-    images: [
-      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1600&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1520975958225-8d3a4f7f1a2b?q=80&w=1600&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1520975681889-b3b6f1b1d0f7?q=80&w=1600&auto=format&fit=crop",
-    ],
-    videos: ["https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"],
-    description:
-      "Perfil verificado. Atención con agenda previa. Trato amable y discreto. Se prioriza higiene y respeto.",
-    measurements: { waist: 62, height: 165, hips: 92, bust: 88 },
-    stats: { views: 18240, messages: 327 },
-    locations: ["Lince"],
-    contact: {
-      phone: "51936615158",
-      whatsapp: "51936615158",
-      telegram: "https://t.me/itapp_demo",
-    },
-    liked: false,
-  },
-  // ... (los demás tal cual los tienes)
-];
+import { BASE_LISTINGS } from "../data/listings.base";
+import { loadListingMediaLocal } from "../data/media.local";
 
 export function useListings() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setListings(MOCK_LISTINGS);
-      setLoading(false);
-    }, 900);
-    return () => clearTimeout(timer);
+    let alive = true;
+
+    (async () => {
+      setLoading(true);
+
+      // Simula “latencia” como tu timeout
+      await new Promise((r) => setTimeout(r, 900));
+
+      const withMedia: Listing[] = await Promise.all(
+        BASE_LISTINGS.map(async (l) => {
+          const media = await loadListingMediaLocal(l.id);
+
+          return {
+            ...l,
+            image: media.image,
+            images: media.images,
+            videos: media.videos ?? [],
+          };
+        })
+      );
+
+      if (alive) {
+        setListings(withMedia);
+        setLoading(false);
+      }
+    })();
+
+    return () => {
+      alive = false;
+    };
   }, []);
 
   const toggleLike = (id: string) => {
@@ -58,13 +57,31 @@ export function useListings() {
   };
 
   const getListing = (id: string) => {
-    return listings.find((l) => l.id === id) || MOCK_LISTINGS.find((l) => l.id === id);
+    return (
+      listings.find((l) => l.id === id) ||
+      // fallback por si recargas y aún está loading:
+      (() => {
+        const base = BASE_LISTINGS.find((l) => l.id === id);
+        if (!base) return undefined;
+
+        // fallback “mínimo” sin esperar fetch
+        return {
+          ...base,
+          image: `/listings/${id}/cover.jpg`,
+          images: [],
+          videos: [],
+        } as Listing;
+      })()
+    );
   };
 
   /** ✅ Marketplace con “relleno” de ads */
   const marketplaceItems = useMemo<MarketplaceItem[]>(() => {
-    const MIN_CARDS = 6; // <- cambia esto si quieres 9, 12, etc.
-    const base: MarketplaceItem[] = listings.map((l) => ({ kind: "listing", listing: l }));
+    const MIN_CARDS = 6;
+    const base: MarketplaceItem[] = listings.map((l) => ({
+      kind: "listing",
+      listing: l,
+    }));
 
     const missing = Math.max(0, MIN_CARDS - base.length);
     const ads: MarketplaceItem[] = Array.from({ length: missing }, (_, i) => ({
@@ -77,7 +94,7 @@ export function useListings() {
 
   return {
     listings,
-    marketplaceItems, // ✅ usa esto en la home para renderizar cards
+    marketplaceItems,
     loading,
     toggleLike,
     addListing,
