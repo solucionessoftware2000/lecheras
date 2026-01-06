@@ -5,14 +5,12 @@ import {
   ArrowLeft,
   MapPin,
   Share2,
-  Heart,
   Eye,
   MessageSquareText,
   Ruler,
   Phone,
-  Send,
-  MessageCircle,
 } from "lucide-react";
+import { FaWhatsapp, FaTelegramPlane } from "react-icons/fa";
 import { useListings } from "../hooks/useListings";
 import { ImageGallery } from "../components/ImageGallery";
 import { Listing } from "../types";
@@ -31,6 +29,32 @@ function buildWhatsAppLink(params: { phone: string; text: string }) {
   return url.toString();
 }
 
+/** ✅ Icono vaso de leche (custom). Con fill-current se "llena" cuando liked=true */
+function MilkGlassIcon({
+  className,
+  filled,
+}: {
+  className?: string;
+  filled?: boolean;
+}) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      aria-hidden="true"
+      fill={filled ? "currentColor" : "none"}
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M7 3h10l-1.2 17.2A2 2 0 0 1 13.81 22h-3.62a2 2 0 0 1-1.99-1.8L7 3z" />
+      <path d="M7.2 6.5h9.6" />
+      {!filled && <path d="M8 10.5h8" opacity="0.75" />}
+    </svg>
+  );
+}
+
 export function ListingDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { getListing, toggleLike } = useListings();
@@ -43,16 +67,14 @@ export function ListingDetailPage() {
     }
   }, [id, getListing]);
 
-  const primaryLocation = useMemo(
-    () => listing?.locations?.[0] ?? "—",
-    [listing]
-  );
+  const primaryLocation = useMemo(() => listing?.locations?.[0] ?? "—", [listing]);
 
   const handleWhatsApp = () => {
     if (!listing) return;
 
-    const locs =
-      listing.locations?.length ? listing.locations.join(", ") : "No especificado";
+    const locs = listing.locations?.length
+      ? listing.locations.join(", ")
+      : "No especificado";
 
     const text = [
       `Hola, quiero información sobre:`,
@@ -161,7 +183,7 @@ export function ListingDetailPage() {
                 <div className="grid grid-cols-1 gap-2 mt-4 sm:grid-cols-3">
                   <button
                     onClick={handleCall}
-                    className="inline-flex items-center justify-center w-full gap-2 px-3 py-2 text-sm text-white border rounded-xl border-white/10 bg-white/5 hover:bg-white/10"
+                    className="inline-flex items-center justify-center w-full gap-2 px-3 py-2 text-sm text-white border rounded-xl border-white/10 bg-white/5 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/40"
                   >
                     <Phone className="w-4 h-4" />
                     Teléfono
@@ -169,17 +191,19 @@ export function ListingDetailPage() {
 
                   <button
                     onClick={handleWhatsApp}
-                    className="inline-flex items-center justify-center w-full gap-2 px-3 py-2 text-sm text-white border rounded-xl border-white/10 bg-white/5 hover:bg-white/10"
+                    className="inline-flex items-center justify-center w-full gap-2 px-3 py-2 text-sm text-white border rounded-xl border-white/10 bg-white/5 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/40"
                   >
-                    <MessageCircle className="w-4 h-4" />
+                    {/* ✅ WhatsApp real */}
+                    <FaWhatsapp className="w-4 h-4 text-green-400" />
                     WhatsApp
                   </button>
 
                   <button
                     onClick={handleTelegram}
-                    className="inline-flex items-center justify-center w-full gap-2 px-3 py-2 text-sm text-white border rounded-xl border-white/10 bg-white/5 hover:bg-white/10"
+                    className="inline-flex items-center justify-center w-full gap-2 px-3 py-2 text-sm text-white border rounded-xl border-white/10 bg-white/5 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/40"
                   >
-                    <Send className="w-4 h-4" />
+                    {/* ✅ Telegram real */}
+                    <FaTelegramPlane className="w-4 h-4 text-sky-400" />
                     Telegram
                   </button>
                 </div>
@@ -291,9 +315,12 @@ export function ListingDetailPage() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleWhatsApp}
-                  className="w-full py-4 font-bold text-center text-white transition-colors bg-red-600 shadow-lg rounded-xl shadow-red-500/20 hover:bg-red-500"
+                  className="w-full py-4 font-bold text-center text-white transition-colors bg-red-600 shadow-lg rounded-xl shadow-red-500/20 hover:bg-red-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/40"
                 >
-                  WhatsApp
+                  <span className="inline-flex items-center justify-center gap-2">
+                    <FaWhatsapp className="w-5 h-5 text-green-200" />
+                    WhatsApp
+                  </span>
                 </motion.button>
 
                 {/* Teléfono */}
@@ -301,7 +328,7 @@ export function ListingDetailPage() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleCall}
-                  className="h-14 w-full sm:w-14 flex items-center justify-center rounded-xl border border-white/10 bg-[#1F1F1F] text-white hover:bg-white/5"
+                  className="h-14 w-full sm:w-14 flex items-center justify-center rounded-xl border border-white/10 bg-[#1F1F1F] text-white hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/40"
                   aria-label="Llamar"
                   title="Llamar"
                 >
@@ -313,39 +340,40 @@ export function ListingDetailPage() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleTelegram}
-                  className="h-14 w-full sm:w-14 flex items-center justify-center rounded-xl border border-white/10 bg-[#1F1F1F] text-white hover:bg-white/5"
+                  className="h-14 w-full sm:w-14 flex items-center justify-center rounded-xl border border-white/10 bg-[#1F1F1F] text-white hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/40"
                   aria-label="Telegram"
                   title="Telegram"
                 >
-                  <Send className="w-6 h-6" />
+                  <FaTelegramPlane className="w-6 h-6 text-sky-300" />
                 </motion.button>
 
-                {/* Like */}
+                {/* Like (vaso de leche) */}
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => toggleLike(listing.id)}
-                  className={`h-14 w-full sm:w-14 flex items-center justify-center rounded-xl border transition-colors ${
+                  className={`h-14 w-full sm:w-14 flex items-center justify-center rounded-xl border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/40 ${
                     listing.liked
-                      ? "border-red-500 bg-red-500/10 text-red-500"
-                      : "border-white/10 bg-[#1F1F1F] text-white hover:bg-white/5"
+                      ? "border-white/20 bg-white/10 text-white"
+                      : "border-white/10 bg-[#1F1F1F] text-neutral-200 hover:bg-white/5"
                   }`}
                   aria-label={listing.liked ? "Quitar like" : "Dar like"}
                   title={listing.liked ? "Quitar like" : "Dar like"}
                 >
-                  <Heart className={`h-6 w-6 ${listing.liked ? "fill-current" : ""}`} />
+                  <MilkGlassIcon
+                    className={`h-6 w-6 ${listing.liked ? "fill-current" : ""}`}
+                    filled={listing.liked}
+                  />
                 </motion.button>
               </div>
 
-              {/* Share abajo solo si quieres, o lo dejamos en el grid:
-                  Si prefieres compartir siempre visible, lo meto al grid como otro icono.
-              */}
+              {/* Share */}
               <div className="mt-3 sm:mt-4">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleShare}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-[#1F1F1F] px-6 py-3 text-white hover:bg-white/5"
+                  className="w-full flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-[#1F1F1F] px-6 py-3 text-white hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/40"
                 >
                   <Share2 className="w-5 h-5" />
                   Compartir

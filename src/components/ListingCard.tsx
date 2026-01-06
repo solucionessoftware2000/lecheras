@@ -4,11 +4,10 @@ import {
   MapPin,
   ArrowRight,
   Phone,
-  Send,
-  MessageCircle,
   Plus,
   BadgeCheck,
 } from "lucide-react";
+import { FaWhatsapp, FaTelegramPlane } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { MarketplaceItem } from "../types";
 
@@ -53,11 +52,8 @@ function MilkGlassIcon({
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      {/* borde del vaso */}
       <path d="M7 3h10l-1.2 17.2A2 2 0 0 1 13.81 22h-3.62a2 2 0 0 1-1.99-1.8L7 3z" />
-      {/* línea superior */}
       <path d="M7.2 6.5h9.6" />
-      {/* nivel (solo visual cuando no está filled; cuando filled se verá sólido igual) */}
       {!filled && <path d="M8 10.5h8" opacity="0.75" />}
     </svg>
   );
@@ -180,6 +176,7 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
 
         {/* Contact Icons (sobre la imagen, abajo-izq) */}
         <div className="absolute z-20 flex items-center gap-2 left-4 bottom-4">
+          {/* Tel */}
           <a
             href={`tel:+${phone}`}
             onClick={(e) => e.stopPropagation()}
@@ -190,28 +187,30 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
             <Phone className="w-4 h-4" />
           </a>
 
+          {/* WhatsApp (REAL) */}
           <a
             href={waUrl}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className={contactBtn}
+            className={`${contactBtn} text-green-400 hover:text-green-300`}
             aria-label="WhatsApp"
             title="WhatsApp"
           >
-            <MessageCircle className="w-4 h-4" />
+            <FaWhatsapp className="w-5 h-5" />
           </a>
 
+          {/* Telegram (REAL) */}
           <a
             href={tgUrl}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className={contactBtn}
+            className={`${contactBtn} text-sky-400 hover:text-sky-300`}
             aria-label="Telegram"
             title="Telegram"
           >
-            <Send className="w-4 h-4" />
+            <FaTelegramPlane className="w-5 h-5" />
           </a>
         </div>
       </div>

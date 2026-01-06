@@ -1,5 +1,5 @@
-
-import { MessageCircle } from "lucide-react";
+import React from "react";
+import { FaWhatsapp } from "react-icons/fa";
 
 const WHATSAPP_URL =
   "https://api.whatsapp.com/send/?phone=51936615158&text=Hola%2C+quiero+informaci%C3%B3n+sobre+tu+web+&type=phone_number&app_absent=0";
@@ -53,7 +53,8 @@ export function WhatsAppFloat() {
               group-hover:scale-[1.04]
             "
           >
-            <MessageCircle className="w-4.5 h-4.5 sm:w-4 sm:h-4" />
+            {/* ✅ Logo real WhatsApp */}
+            <FaWhatsapp className="h-5 w-5 sm:h-[18px] sm:w-[18px]" />
           </span>
         </div>
 
