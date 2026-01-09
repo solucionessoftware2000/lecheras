@@ -86,7 +86,7 @@ export function MarketplacePage() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-4 text-4xl font-bold tracking-tight text-white md:text-5xl"
           >
-            Vips <span className="text-red-500">Verificadas</span> de lima
+            Escorts y <span className="text-red-500">Kinesiologas</span> vips de lima
           </motion.h1>
         </div>
 
