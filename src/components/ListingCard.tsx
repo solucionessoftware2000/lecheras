@@ -75,16 +75,20 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
         className="group relative flex flex-col overflow-hidden rounded-xl bg-[#1F1F1F] shadow-lg shadow-black/20 border border-white/5 cursor-pointer"
       >
+        {/* Top */}
         <div className="relative aspect-[4/3] overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-t from-[#1F1F1F] via-black/30 to-black/10 opacity-90" />
+
+          {/* ✅ CENTRADO PERFECTO (con offset leve hacia abajo) */}
           <div className="absolute inset-0 grid place-items-center">
-            <div className="flex flex-col items-center gap-3">
-              <div className="grid transition border h-14 w-14 place-items-center rounded-2xl border-white/10 bg-black/30 text-white/90 group-hover:border-white/20 group-hover:bg-white/5">
+            <div className="w-full px-6 text-center translate-y-2">
+              <div className="grid mx-auto transition border h-14 w-14 place-items-center rounded-2xl border-white/10 bg-black/30 text-white/90 group-hover:border-white/20 group-hover:bg-white/5">
                 <Plus className="h-7 w-7" />
               </div>
-              <div className="text-center">
+
+              <div className="mt-3">
                 <div className="text-lg font-bold text-white">Anúnciate aquí</div>
-                <div className="text-sm text-neutral-400">
+                <div className="mt-1 text-sm text-neutral-400">
                   Toca para escribir por WhatsApp
                 </div>
               </div>
@@ -96,24 +100,27 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
           </div>
         </div>
 
+        {/* ✅ Bottom: pegado abajo */}
         <div className="flex flex-col flex-1 p-5">
-          <div className="flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <h3 className="truncate text-[18px] font-bold text-white group-hover:text-red-500 transition-colors">
-                Publica tu perfil
-              </h3>
-              <p className="text-sm text-neutral-400">Promoción destacada</p>
+          <div className="mt-auto">
+            <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <h3 className="truncate text-[18px] font-bold text-white group-hover:text-red-500 transition-colors">
+                  Publica tu perfil
+                </h3>
+                <p className="text-sm text-neutral-400">Promoción destacada</p>
+              </div>
+
+              <div className="flex items-center gap-2 text-sm font-medium transition-colors text-white/90 group-hover:text-red-500">
+                Ir
+                <ArrowRight className="w-4 h-4" />
+              </div>
             </div>
 
-            <div className="flex items-center gap-2 text-sm font-medium transition-colors text-white/90 group-hover:text-red-500">
-              Ir
-              <ArrowRight className="w-4 h-4" />
-            </div>
-          </div>
-
-          <div className="pt-4 mt-auto">
-            <div className="pt-4 text-xs border-t border-white/5 text-neutral-500">
-              Se abrirá WhatsApp para más información.
+            <div className="pt-4 mt-4">
+              <div className="pt-4 text-xs border-t border-white/5 text-neutral-500">
+                Se abrirá WhatsApp para más información.
+              </div>
             </div>
           </div>
         </div>
@@ -137,7 +144,10 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
   const [imgLoaded, setImgLoaded] = useState(false);
   const [imgError, setImgError] = useState(false);
 
-  // ✅ botones (ahora van fuera de la imagen)
+  // ✅ Aspect ratio dinámico (toma el real de la foto)
+  const [ratio, setRatio] = useState<string>("4 / 3");
+
+  // ✅ botones fuera de la imagen
   const contactBtn =
     "grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/5 text-white/80 hover:text-white hover:border-white/20 hover:bg-white/10 transition";
 
@@ -155,26 +165,21 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
       className="group relative flex flex-col overflow-hidden rounded-xl bg-[#1F1F1F] shadow-lg shadow-black/20 border border-white/5 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-red-500/40"
     >
-      {/* Image Container (solo imagen + precio encima) */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-black/30">
-        {/* ✅ Skeleton mientras carga */}
+      <div className="relative w-full overflow-hidden bg-black/30" style={{ aspectRatio: ratio }}>
         {!imgLoaded && !imgError && (
           <div className="absolute inset-0 z-0">
             <Skeleton className="w-full h-full" />
             <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.2s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
             <style>
               {`
-                @keyframes shimmer {
-                  100% { transform: translateX(100%); }
-                }
+                @keyframes shimmer { 100% { transform: translateX(100%); } }
               `}
             </style>
           </div>
         )}
 
-        {/* ✅ Imagen completa (sin recorte) */}
         <motion.img
-          whileHover={{ scale: 1.04 }}
+          whileHover={{ scale: 1.02 }}
           transition={{ duration: 0.6 }}
           src={listing.image}
           alt={listing.name}
@@ -183,29 +188,31 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
           } transition-opacity`}
           loading="lazy"
           draggable={false}
-          onLoad={() => setImgLoaded(true)}
+          onLoad={(e) => {
+            const img = e.currentTarget;
+            const w = img.naturalWidth;
+            const h = img.naturalHeight;
+            if (w > 0 && h > 0) setRatio(`${w} / ${h}`);
+            setImgLoaded(true);
+          }}
           onError={() => {
             setImgError(true);
             setImgLoaded(true);
           }}
         />
 
-        {/* ✅ Fallback si falla (no icono roto) */}
         {imgError && (
           <div className="absolute inset-0 grid place-items-center text-neutral-500">
             <div className="text-xs">Imagen no disponible</div>
           </div>
         )}
 
-        {/* ✅ Price Tag (único overlay, más esquineado) */}
         <div className="absolute z-20 px-3 py-1 text-sm font-semibold text-white border rounded-full top-2 right-2 sm:top-3 sm:right-3 bg-black/70 backdrop-blur-md border-white/10">
           ${listing.price.toLocaleString()}
         </div>
       </div>
 
-      {/* ✅ Barra debajo de la imagen: VIP + contactos (FUERA de la foto) */}
       <div className="flex items-center justify-between gap-3 px-4 py-3 border-t border-white/5">
-        {/* VIP a la izquierda */}
         <div className="min-w-0">
           <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/25 bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-300">
             <BadgeCheck className="w-4 h-4 text-emerald-300" />
@@ -213,7 +220,6 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
           </div>
         </div>
 
-        {/* Contactos a la derecha */}
         <div className="flex items-center gap-2 shrink-0">
           <a
             href={`tel:+${phone}`}
@@ -251,9 +257,7 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
         </div>
       </div>
 
-      {/* Content */}
       <div className="flex flex-col flex-1 p-5">
-        {/* Fila: Nombre + Edad + Lugar  |  Like */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center flex-1 min-w-0 gap-3">
             <h3 className="min-w-0 truncate text-[18px] font-bold text-white transition-colors group-hover:text-red-500">
@@ -292,7 +296,6 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
           </motion.button>
         </div>
 
-        {/* Abajo: Ver detalles */}
         <div className="pt-4 mt-auto">
           <div className="flex items-center justify-between pt-4 border-t border-white/5">
             <div className="flex items-center gap-2 text-sm font-medium text-white transition-colors group-hover:text-red-500">

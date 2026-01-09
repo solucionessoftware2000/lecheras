@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
-import { motion } from "framer-motion";
-import { Play, Image as ImageIcon, Video as VideoIcon } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Play, Image as ImageIcon, Video as VideoIcon, X } from "lucide-react";
 
 type Props = {
   name: string;
@@ -53,6 +53,9 @@ export function ImageGallery({ images, videos = [], name }: Props) {
   const [mainLoaded, setMainLoaded] = useState(false);
   const [thumbLoaded, setThumbLoaded] = useState<Record<string, boolean>>({});
 
+  // ✅ Modal state (solo para imagenes)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   // Si cambias tab y el index queda fuera
   React.useEffect(() => {
     setActive(0);
@@ -63,7 +66,34 @@ export function ImageGallery({ images, videos = [], name }: Props) {
     setMainLoaded(false);
   }, [activeItem?.src, activeItem?.type, tab]);
 
+  // ✅ cerrar con ESC
+  React.useEffect(() => {
+    if (!isModalOpen) return;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsModalOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isModalOpen]);
+
+  // ✅ bloquear scroll cuando modal está abierto
+  React.useEffect(() => {
+    if (!isModalOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [isModalOpen]);
+
   const mainSrcKey = `${activeItem?.type ?? "none"}:${activeItem?.src ?? "none"}`;
+
+  const openModalIfImage = () => {
+    if (activeItem?.type === "image" && activeItem?.src) {
+      setIsModalOpen(true);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -137,7 +167,9 @@ export function ImageGallery({ images, videos = [], name }: Props) {
           {activeItem?.type === "video" ? (
             <video
               key={mainSrcKey}
-              className={`object-contain w-full h-full ${mainLoaded ? "opacity-100" : "opacity-0"}`}
+              className={`object-contain w-full h-full ${
+                mainLoaded ? "opacity-100" : "opacity-0"
+              }`}
               controls
               playsInline
               preload="metadata"
@@ -153,14 +185,67 @@ export function ImageGallery({ images, videos = [], name }: Props) {
               transition={{ duration: 0.35 }}
               src={activeItem?.src}
               alt={name}
-              className="object-contain w-full h-full select-none"
+              className={`object-contain w-full h-full select-none ${
+                activeItem?.src ? "cursor-zoom-in" : ""
+              }`}
               draggable={false}
               onLoad={() => setMainLoaded(true)}
               onError={() => setMainLoaded(true)} // evita skeleton infinito si falla
+              onClick={openModalIfImage}
             />
           )}
         </div>
       </div>
+
+      {/* ✅ Modal fullscreen para imagen */}
+      <AnimatePresence>
+        {isModalOpen && activeItem?.type === "image" && activeItem?.src && (
+          <motion.div
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsModalOpen(false)}
+            aria-modal="true"
+            role="dialog"
+          >
+            {/* Contenido */}
+            <motion.div
+              initial={{ scale: 0.98, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.98, opacity: 0 }}
+              transition={{ duration: 0.18 }}
+              className="relative w-full max-w-6xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Botón cerrar */}
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="absolute z-10 grid w-10 h-10 transition border rounded-full -top-2 -right-2 sm:top-2 sm:right-2 place-items-center border-white/10 bg-black/60 text-white/90 hover:bg-black/80 hover:text-white"
+                aria-label="Cerrar"
+                title="Cerrar"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {/* Imagen grande */}
+              <div className="overflow-hidden border rounded-2xl border-white/10 bg-black/40">
+                <img
+                  src={activeItem.src}
+                  alt={name}
+                  className="w-full max-h-[85vh] object-contain select-none"
+                  draggable={false}
+                />
+              </div>
+
+              {/* Hint */}
+              <div className="mt-3 text-xs text-center text-white/70">
+                Presiona <span className="font-semibold">ESC</span> para cerrar
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Thumbnails */}
       <div className="grid grid-cols-4 gap-3 sm:grid-cols-6">
@@ -199,12 +284,8 @@ export function ImageGallery({ images, videos = [], name }: Props) {
                         thumbLoaded[key] ? "opacity-100" : "opacity-0"
                       } transition-opacity`}
                       loading="lazy"
-                      onLoad={() =>
-                        setThumbLoaded((prev) => ({ ...prev, [key]: true }))
-                      }
-                      onError={() =>
-                        setThumbLoaded((prev) => ({ ...prev, [key]: true }))
-                      }
+                      onLoad={() => setThumbLoaded((prev) => ({ ...prev, [key]: true }))}
+                      onError={() => setThumbLoaded((prev) => ({ ...prev, [key]: true }))}
                     />
                   </>
                 )}
