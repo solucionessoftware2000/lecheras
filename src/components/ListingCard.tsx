@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { MapPin, ArrowRight, Phone, Plus, BadgeCheck } from "lucide-react";
 import { FaWhatsapp, FaTelegramPlane } from "react-icons/fa";
