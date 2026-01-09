@@ -28,7 +28,9 @@ function buildWhatsAppLink(params: { phone: string; text: string }) {
 }
 
 function Skeleton({ className = "" }: { className?: string }) {
-  return <div className={`animate-pulse bg-white/10 ${className}`} aria-hidden="true" />;
+  return (
+    <div className={`animate-pulse bg-white/10 ${className}`} aria-hidden="true" />
+  );
 }
 
 /** ✅ Icono vaso de leche (custom). Con fill-current se "llena" cuando liked=true */
@@ -131,12 +133,13 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
 
   const tgUrl = listing.contact.telegram;
 
-  const contactBtn =
-    "grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-black/30 text-white/80 hover:text-white hover:border-white/20 hover:bg-white/5 transition";
-
   // ✅ Skeleton + error control
   const [imgLoaded, setImgLoaded] = useState(false);
   const [imgError, setImgError] = useState(false);
+
+  // ✅ botones (ahora van fuera de la imagen)
+  const contactBtn =
+    "grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/5 text-white/80 hover:text-white hover:border-white/20 hover:bg-white/10 transition";
 
   return (
     <motion.div
@@ -152,10 +155,8 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
       className="group relative flex flex-col overflow-hidden rounded-xl bg-[#1F1F1F] shadow-lg shadow-black/20 border border-white/5 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-red-500/40"
     >
-      {/* Image Container */}
+      {/* Image Container (solo imagen + precio encima) */}
       <div className="relative aspect-[4/3] overflow-hidden bg-black/30">
-        <div className="absolute inset-0 bg-gradient-to-t from-[#1F1F1F] via-transparent to-transparent opacity-60 z-10 pointer-events-none" />
-
         {/* ✅ Skeleton mientras carga */}
         {!imgLoaded && !imgError && (
           <div className="absolute inset-0 z-0">
@@ -173,7 +174,7 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
 
         {/* ✅ Imagen completa (sin recorte) */}
         <motion.img
-          whileHover={{ scale: 1.06 }}          // (contain se ve mejor con hover suave)
+          whileHover={{ scale: 1.04 }}
           transition={{ duration: 0.6 }}
           src={listing.image}
           alt={listing.name}
@@ -196,21 +197,24 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
           </div>
         )}
 
-        {/* ✅ VIP Badge */}
-        <div className="absolute z-20 top-4 left-4">
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/25 bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-300 backdrop-blur">
+        {/* ✅ Price Tag (único overlay, más esquineado) */}
+        <div className="absolute z-20 px-3 py-1 text-sm font-semibold text-white border rounded-full top-2 right-2 sm:top-3 sm:right-3 bg-black/70 backdrop-blur-md border-white/10">
+          ${listing.price.toLocaleString()}
+        </div>
+      </div>
+
+      {/* ✅ Barra debajo de la imagen: VIP + contactos (FUERA de la foto) */}
+      <div className="flex items-center justify-between gap-3 px-4 py-3 border-t border-white/5">
+        {/* VIP a la izquierda */}
+        <div className="min-w-0">
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/25 bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-300">
             <BadgeCheck className="w-4 h-4 text-emerald-300" />
-            VIP verificada de Lima
+            <span className="truncate">VERIFICADA</span>
           </div>
         </div>
 
-        {/* Price Tag */}
-        <div className="absolute z-20 px-3 py-1 text-sm font-semibold text-white border rounded-full top-4 right-4 bg-black/60 backdrop-blur-md border-white/10">
-          ${listing.price.toLocaleString()}
-        </div>
-
-        {/* Contact Icons */}
-        <div className="absolute z-20 flex items-center gap-2 left-4 bottom-4">
+        {/* Contactos a la derecha */}
+        <div className="flex items-center gap-2 shrink-0">
           <a
             href={`tel:+${phone}`}
             onClick={(e) => e.stopPropagation()}
@@ -249,6 +253,7 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
 
       {/* Content */}
       <div className="flex flex-col flex-1 p-5">
+        {/* Fila: Nombre + Edad + Lugar  |  Like */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center flex-1 min-w-0 gap-3">
             <h3 className="min-w-0 truncate text-[18px] font-bold text-white transition-colors group-hover:text-red-500">
@@ -287,6 +292,7 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
           </motion.button>
         </div>
 
+        {/* Abajo: Ver detalles */}
         <div className="pt-4 mt-auto">
           <div className="flex items-center justify-between pt-4 border-t border-white/5">
             <div className="flex items-center gap-2 text-sm font-medium text-white transition-colors group-hover:text-red-500">
