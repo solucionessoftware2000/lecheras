@@ -12,6 +12,21 @@ type MediaItem =
   | { type: "image"; src: string }
   | { type: "video"; src: string };
 
+function Skeleton({
+  className = "",
+  rounded = "rounded-lg",
+}: {
+  className?: string;
+  rounded?: string;
+}) {
+  return (
+    <div
+      className={`${rounded} ${className} animate-pulse bg-white/10`}
+      aria-hidden="true"
+    />
+  );
+}
+
 export function ImageGallery({ images, videos = [], name }: Props) {
   const hasVideos = videos.length > 0;
 
@@ -21,7 +36,9 @@ export function ImageGallery({ images, videos = [], name }: Props) {
     return [...imgs, ...vids];
   }, [images, videos]);
 
-  const [tab, setTab] = useState<"photos" | "videos" | "all">(hasVideos ? "all" : "photos");
+  const [tab, setTab] = useState<"photos" | "videos" | "all">(
+    hasVideos ? "all" : "photos"
+  );
 
   const media = useMemo<MediaItem[]>(() => {
     if (tab === "photos") return images.map((src) => ({ type: "image", src }));
@@ -32,10 +49,21 @@ export function ImageGallery({ images, videos = [], name }: Props) {
   const [active, setActive] = useState(0);
   const activeItem = media[active] ?? media[0];
 
+  // 🔥 loading states
+  const [mainLoaded, setMainLoaded] = useState(false);
+  const [thumbLoaded, setThumbLoaded] = useState<Record<string, boolean>>({});
+
   // Si cambias tab y el index queda fuera
   React.useEffect(() => {
     setActive(0);
   }, [tab]);
+
+  // ✅ cada vez que cambia el item principal, mostramos skeleton hasta que cargue
+  React.useEffect(() => {
+    setMainLoaded(false);
+  }, [activeItem?.src, activeItem?.type, tab]);
+
+  const mainSrcKey = `${activeItem?.type ?? "none"}:${activeItem?.src ?? "none"}`;
 
   return (
     <div className="space-y-4">
@@ -86,26 +114,49 @@ export function ImageGallery({ images, videos = [], name }: Props) {
 
       {/* Main */}
       <div className="relative overflow-hidden rounded-xl bg-[#1F1F1F] border border-white/5">
-        <div className="relative aspect-[4/3] w-full overflow-hidden">
-          <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60" />
+        <div className="relative aspect-[4/3] w-full overflow-hidden bg-black/30">
+          {/* overlay suave */}
+          <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60" />
+
+          {/* ✅ Skeleton main */}
+          {!mainLoaded && (
+            <div className="absolute inset-0 z-20 p-4">
+              <Skeleton className="w-full h-full" rounded="rounded-none" />
+              {/* shimmer bar sutil */}
+              <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.2s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+              <style>
+                {`
+                  @keyframes shimmer {
+                    100% { transform: translateX(100%); }
+                  }
+                `}
+              </style>
+            </div>
+          )}
 
           {activeItem?.type === "video" ? (
             <video
-              className="object-cover w-full h-full"
+              key={mainSrcKey}
+              className={`object-contain w-full h-full ${mainLoaded ? "opacity-100" : "opacity-0"}`}
               controls
               playsInline
               preload="metadata"
               src={activeItem.src}
+              onLoadedData={() => setMainLoaded(true)}
+              onCanPlay={() => setMainLoaded(true)}
             />
           ) : (
             <motion.img
-              key={activeItem?.src}
+              key={mainSrcKey}
               initial={{ opacity: 0.6, scale: 1.02 }}
-              animate={{ opacity: 1, scale: 1 }}
+              animate={{ opacity: mainLoaded ? 1 : 0, scale: 1 }}
               transition={{ duration: 0.35 }}
               src={activeItem?.src}
               alt={name}
-              className="object-cover w-full h-full"
+              className="object-contain w-full h-full select-none"
+              draggable={false}
+              onLoad={() => setMainLoaded(true)}
+              onError={() => setMainLoaded(true)} // evita skeleton infinito si falla
             />
           )}
         </div>
@@ -115,6 +166,8 @@ export function ImageGallery({ images, videos = [], name }: Props) {
       <div className="grid grid-cols-4 gap-3 sm:grid-cols-6">
         {media.map((item, idx) => {
           const isActive = idx === active;
+          const key = `${item.type}:${item.src}`;
+
           return (
             <button
               key={`${item.type}-${item.src}-${idx}`}
@@ -124,7 +177,7 @@ export function ImageGallery({ images, videos = [], name }: Props) {
               } bg-[#1F1F1F]`}
               aria-label={`Seleccionar ${item.type === "video" ? "video" : "foto"} ${idx + 1}`}
             >
-              <div className="aspect-[4/3]">
+              <div className="relative aspect-[4/3]">
                 {item.type === "video" ? (
                   <div className="flex items-center justify-center w-full h-full text-neutral-400">
                     <span className="inline-flex items-center gap-2 text-xs">
@@ -133,12 +186,27 @@ export function ImageGallery({ images, videos = [], name }: Props) {
                     </span>
                   </div>
                 ) : (
-                  <img
-                    src={item.src}
-                    alt={`${name} ${idx + 1}`}
-                    className="object-cover w-full h-full"
-                    loading="lazy"
-                  />
+                  <>
+                    {!thumbLoaded[key] && (
+                      <div className="absolute inset-0">
+                        <Skeleton className="w-full h-full" rounded="rounded-none" />
+                      </div>
+                    )}
+                    <img
+                      src={item.src}
+                      alt={`${name} ${idx + 1}`}
+                      className={`object-cover w-full h-full ${
+                        thumbLoaded[key] ? "opacity-100" : "opacity-0"
+                      } transition-opacity`}
+                      loading="lazy"
+                      onLoad={() =>
+                        setThumbLoaded((prev) => ({ ...prev, [key]: true }))
+                      }
+                      onError={() =>
+                        setThumbLoaded((prev) => ({ ...prev, [key]: true }))
+                      }
+                    />
+                  </>
                 )}
               </div>
 
