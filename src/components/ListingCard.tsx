@@ -1,12 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
-import {
-  MapPin,
-  ArrowRight,
-  Phone,
-  Plus,
-  BadgeCheck,
-} from "lucide-react";
+import { MapPin, ArrowRight, Phone, Plus, BadgeCheck } from "lucide-react";
 import { FaWhatsapp, FaTelegramPlane } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { MarketplaceItem } from "../types";
@@ -31,6 +25,10 @@ function buildWhatsAppLink(params: { phone: string; text: string }) {
   url.searchParams.set("type", "phone_number");
   url.searchParams.set("app_absent", "0");
   return url.toString();
+}
+
+function Skeleton({ className = "" }: { className?: string }) {
+  return <div className={`animate-pulse bg-white/10 ${className}`} aria-hidden="true" />;
 }
 
 /** ✅ Icono vaso de leche (custom). Con fill-current se "llena" cuando liked=true */
@@ -136,6 +134,10 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
   const contactBtn =
     "grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-black/30 text-white/80 hover:text-white hover:border-white/20 hover:bg-white/5 transition";
 
+  // ✅ Skeleton + error control
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [imgError, setImgError] = useState(false);
+
   return (
     <motion.div
       role="link"
@@ -151,17 +153,50 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
       className="group relative flex flex-col overflow-hidden rounded-xl bg-[#1F1F1F] shadow-lg shadow-black/20 border border-white/5 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-red-500/40"
     >
       {/* Image Container */}
-      <div className="relative aspect-[4/3] overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-t from-[#1F1F1F] via-transparent to-transparent opacity-60 z-10" />
+      <div className="relative aspect-[4/3] overflow-hidden bg-black/30">
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1F1F1F] via-transparent to-transparent opacity-60 z-10 pointer-events-none" />
+
+        {/* ✅ Skeleton mientras carga */}
+        {!imgLoaded && !imgError && (
+          <div className="absolute inset-0 z-0">
+            <Skeleton className="w-full h-full" />
+            <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.2s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+            <style>
+              {`
+                @keyframes shimmer {
+                  100% { transform: translateX(100%); }
+                }
+              `}
+            </style>
+          </div>
+        )}
+
+        {/* ✅ Imagen completa (sin recorte) */}
         <motion.img
-          whileHover={{ scale: 1.1 }}
+          whileHover={{ scale: 1.06 }}          // (contain se ve mejor con hover suave)
           transition={{ duration: 0.6 }}
           src={listing.image}
           alt={listing.name}
-          className="object-cover w-full h-full"
+          className={`w-full h-full object-contain ${
+            imgLoaded && !imgError ? "opacity-100" : "opacity-0"
+          } transition-opacity`}
+          loading="lazy"
+          draggable={false}
+          onLoad={() => setImgLoaded(true)}
+          onError={() => {
+            setImgError(true);
+            setImgLoaded(true);
+          }}
         />
 
-        {/* ✅ VIP Badge (verde con check) */}
+        {/* ✅ Fallback si falla (no icono roto) */}
+        {imgError && (
+          <div className="absolute inset-0 grid place-items-center text-neutral-500">
+            <div className="text-xs">Imagen no disponible</div>
+          </div>
+        )}
+
+        {/* ✅ VIP Badge */}
         <div className="absolute z-20 top-4 left-4">
           <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/25 bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-300 backdrop-blur">
             <BadgeCheck className="w-4 h-4 text-emerald-300" />
@@ -174,9 +209,8 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
           ${listing.price.toLocaleString()}
         </div>
 
-        {/* Contact Icons (sobre la imagen, abajo-izq) */}
+        {/* Contact Icons */}
         <div className="absolute z-20 flex items-center gap-2 left-4 bottom-4">
-          {/* Tel */}
           <a
             href={`tel:+${phone}`}
             onClick={(e) => e.stopPropagation()}
@@ -187,7 +221,6 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
             <Phone className="w-4 h-4" />
           </a>
 
-          {/* WhatsApp (REAL) */}
           <a
             href={waUrl}
             target="_blank"
@@ -200,7 +233,6 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
             <FaWhatsapp className="w-5 h-5" />
           </a>
 
-          {/* Telegram (REAL) */}
           <a
             href={tgUrl}
             target="_blank"
@@ -217,7 +249,6 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
 
       {/* Content */}
       <div className="flex flex-col flex-1 p-5">
-        {/* Fila: Nombre + Edad + Lugar  |  Like (vaso de leche) */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center flex-1 min-w-0 gap-3">
             <h3 className="min-w-0 truncate text-[18px] font-bold text-white transition-colors group-hover:text-red-500">
@@ -234,7 +265,6 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
             </span>
           </div>
 
-          {/* ✅ Like con vaso de leche */}
           <motion.button
             whileTap={{ scale: 0.8 }}
             onClick={(e) => {
@@ -257,7 +287,6 @@ export function ListingCard({ item, onToggleLike }: ListingCardProps) {
           </motion.button>
         </div>
 
-        {/* Abajo: Ver detalles */}
         <div className="pt-4 mt-auto">
           <div className="flex items-center justify-between pt-4 border-t border-white/5">
             <div className="flex items-center gap-2 text-sm font-medium text-white transition-colors group-hover:text-red-500">
